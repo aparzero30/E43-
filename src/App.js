@@ -5,17 +5,21 @@ const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState("");
   const [filter, setFilter] = useState(false);
+  const [currentId, setCurrentId] = useState(1); // initialize the ID to 1
 
   const handleAddTodo = () => {
     if (!newTodo) return;
-    setTodos([...todos, { name: newTodo, completed: false }]);
+    const newId = currentId + 1; // generate a new ID
+    setTodos([...todos, { id: newId, name: newTodo, completed: false }]);
+    setCurrentId(newId); // update the current ID to the new ID
     setNewTodo("");
     console.log(todos); // Check the todos array in the console
   };
 
-  const handleToggleCompleted = (i) => {
+  const handleToggleCompleted = (id) => {
     const updatedTodos = [...todos];
-    updatedTodos[i].completed = !updatedTodos[i].completed;
+    const index = updatedTodos.findIndex((todo) => todo.id === id);
+    updatedTodos[index].completed = !updatedTodos[index].completed;
     setTodos(updatedTodos);
   };
 
@@ -42,19 +46,19 @@ const TodoList = () => {
 
       <ul id="myUl">
         {todos
-          .filter((todo) => !filter || !todo.completed)
+          .filter((todo) => !filter || !todo.completed) // filter out completed todos
           .map((todo, i) => (
             <li
-              key={i}
+              key={todo.id}
               style={{
                 backgroundColor: todo.completed ? "skyblue" : "cadetblue",
               }}
             >
               <input
                 type="checkbox"
-                id={`todo${i}`}
+                id={`todo${todo.id}`}
                 checked={todo.completed}
-                onChange={() => handleToggleCompleted(i)}
+                onChange={() => handleToggleCompleted(todo.id)}
                 className="licb"
               />
               {todo.completed ? <s>{todo.name}</s> : todo.name}
